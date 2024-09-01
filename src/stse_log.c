@@ -8,7 +8,8 @@ static const char* pSeverityStrings[STSE_LOG_SEVERITY_MAX] = {
     "FATAL",
     "ERROR",
     "WARNING",
-    "DEBUG"
+    "DEBUG",
+    "INFO"
 };
 
 static void STSE_Log_printPrefix(const enum STSE_Log_Severity severity, const char* pInFile, const uint32_t line)

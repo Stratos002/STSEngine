@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef STSE_DEBUG
+#ifdef STSE_CONFIGURATION_DEBUG
 
 // ========= DEBUG ==========
 
@@ -96,12 +96,12 @@ enum STSE_Result STSE_Memory_allocate(const uint32_t size, const char* pInFile, 
     return STSE_RESULT_SUCCESS;
 }
 
-void STSE_Memory_deallocate(void** ppInOutBlock)
+enum STSE_Result STSE_Memory_deallocate(void** ppInOutBlock)
 {
     if(pState == NULL)
     {
         STSE_LOG_ERROR("memory system not already initialized");
-        return;
+        return STSE_RESULT_NOT_INITIALIZED;
     }
 
     STSE_ASSERT(ppInOutBlock != NULL);
@@ -116,11 +116,11 @@ void STSE_Memory_deallocate(void** ppInOutBlock)
 
             *ppInOutBlock = NULL;
             --(pState->allocationCount);
-            return;
+            return STSE_RESULT_SUCCESS;
         }
     }
-    STSE_LOG_ERROR("trying to deallocate a block that was never allocated");
-    return;
+    STSE_LOG_WARNING("trying to deallocate a block that was never allocated");
+    return STSE_RESULT_SUCCESS;
 }
 
 void STSE_Memory_memset(const uint32_t size, const int32_t value, void* pInOutBlock)
@@ -152,10 +152,11 @@ enum STSE_Result STSE_Memory_allocate(const uint32_t size, void** ppOutBlock)
     return STSE_RESULT_SUCCESS;
 }
 
-void STSE_Memory_deallocate(void** ppInOutBlock)
+enum STSE_Result STSE_Memory_deallocate(void** ppInOutBlock)
 {
     free(*ppInOutBlock);
     *ppInOutBlock = NULL;
+    return STSE_RESULT_SUCCESS;
 }
 
 void STSE_Memory_memset(const uint32_t size, const int32_t value, void* pInOutBlock)

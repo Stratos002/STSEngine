@@ -1,13 +1,9 @@
 #ifndef STSENGINE_H
 #define STSENGINE_H
 
-enum STSE_Result
-{
-    STSE_RESULT_SUCCESS,
-    STSE_RESULT_NOT_INITIALIZED,
-    STSE_RESULT_ALREADY_INITIALIZED,
-    STSE_RESULT_MAX_ALLOCATION_COUNT_REACHED
-};
+#include "stse_result.h"
+
+enum STSE_Result STSE_returnResultIfFailure(const enum STSE_Result result, const char* pMessage);
 
 enum STSE_Result STSE_initialize();
 

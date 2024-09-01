@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#ifdef STSE_DEBUG
+#ifdef STSE_CONFIGURATION_DEBUG
     #define STSE_ASSERT(expr)                                                                                   \
         if((expr) != true)                                                                                      \
         {                                                                                                       \

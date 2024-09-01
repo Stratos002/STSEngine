@@ -9,7 +9,7 @@ enum STSE_Result STSE_Memory_initialize();
 
 void STSE_Memory_terminate();
 
-#ifdef STSE_DEBUG
+#ifdef STSE_CONFIGURATION_DEBUG
     enum STSE_Result STSE_Memory_allocate(const uint32_t size, const char* pInFile, const uint32_t line, void** ppOutBlock);
     #define STSE_MEMORY_ALLOCATE(size, ppOutBlock) STSE_Memory_allocate(size, __FILE__, __LINE__, (void**)(ppOutBlock))
 #else
@@ -17,7 +17,7 @@ void STSE_Memory_terminate();
     #define STSE_MEMORY_ALLOCATE(size, ppOutBlock) STSE_Memory_allocate(size, (void**)(ppOutBlock))
 #endif
 
-void STSE_Memory_deallocate(void** ppInOutBlock);
+enum STSE_Result STSE_Memory_deallocate(void** ppInOutBlock);
 #define STSE_MEMORY_DEALLOCATE(ppInOutBlock) STSE_Memory_deallocate((void**)(ppInOutBlock))
 
 void STSE_Memory_memset(const uint32_t size, const int32_t value, void* pInOutBlock);
