@@ -4,6 +4,7 @@
 #include "stse_memory.h"
 #include "stse_log.h"
 
+#define VOLK_IMPLEMENTATION
 #include "volk.h"
 
 struct STSE_GPU_State
@@ -16,15 +17,17 @@ struct STSE_GPU_State
 
 static struct STSE_GPU_State* pState = NULL;
 
-static enum STSE_Result STSE_GPU_checkVkResult(const VkResult result)
+static void STSE_GPU_logVkError(const VkResult result, const char* pMessage)
 {
-    if(result != VK_SUCCESS)
-    {
-        STSE_LOG_ERROR("vulkan error : %d", result);
-        return STSE_RESULT_GRAPHICS_API_FAILURE;
-    }
-    return STSE_RESULT_SUCCESS;
+    STSE_LOG_ERROR_ARGS("vulkan error : %s (result = %d)", pMessage, (int32_t)result);
 }
+
+/*
+- variable declarations & initialization
+- check input variables
+- initialize out variables
+- do the rest
+*/
 
 static enum STSE_Result STSE_GPU_createVkInstance(
     const char* pApplicationName, 
@@ -34,7 +37,12 @@ static enum STSE_Result STSE_GPU_createVkInstance(
     const char** ppExtensionNames, 
     VkInstance* pOutInstance)
 {
-    VkApplicationInfo applicationInfo;
+    VkInstanceCreateInfo instanceCreateInfo = VK_NULL_HANDLE;
+    VkResult vkResult = VK_SUCCESS;
+    VkApplicationInfo applicationInfo = VK_NULL_HANDLE;
+
+    *pOutInstance = VK_NULL_HANDLE;
+    
     STSE_MEMORY_MEMZERO(sizeof(VkApplicationInfo), &applicationInfo);
     applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     applicationInfo.pNext = NULL;
@@ -44,7 +52,6 @@ static enum STSE_Result STSE_GPU_createVkInstance(
     applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
     applicationInfo.apiVersion = VK_MAKE_API_VERSION(1, 3, 0, 0);  
 
-    VkInstanceCreateInfo instanceCreateInfo;
     STSE_MEMORY_MEMZERO(sizeof(VkInstanceCreateInfo), &instanceCreateInfo);
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceCreateInfo.pNext = NULL;
@@ -55,33 +62,58 @@ static enum STSE_Result STSE_GPU_createVkInstance(
     instanceCreateInfo.enabledExtensionCount = extensionCount;
     instanceCreateInfo.ppEnabledExtensionNames = ppExtensionNames;
 
-    STSE_RESULT_RETURN_IF_ERROR(STSE_GPU_checkVkResult(vkCreateInstance(&instanceCreateInfo, pState->pAllocator, &pState->instance)), 
-        "failed to create VkInstance");
+    vkResult = vkCreateInstance(&instanceCreateInfo, pState->pAllocator, &pState->instance);
+    if(vkResult != VK_SUCCESS)
+    {
+        STSE_GPU_logVkError(vkResult, "could not create instance");
+        return STSE_RESULT_GRAPHICS_API_FAILURE;
+    }
 
     return STSE_RESULT_SUCCESS;
 }
 
 static enum STSE_Result STSE_GPU_pickVkPhysicalDevice(const VkInstance instance, VkPhysicalDevice* pOutPhysicalDevice)
 {
-    *pOutPhysicalDevice = VK_NULL_HANDLE;
+    VkResult vkResult = VK_SUCCESS;
+    enum STSE_Result result = STSE_RESULT_SUCCESS;
     uint32_t physicalDeviceCount = 0u;
-    STSE_RESULT_RETURN_IF_ERROR(STSE_GPU_checkVkResult(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, NULL))
-        ,"failed to enumerate physical devices");
+    uint32_t physicalDeviceIndex = 0u;
+    VkPhysicalDevice* pPhysicalDevices = NULL;
+    VkPhysicalDeviceProperties physicalDeviceProperties = VK_NULL_HANDLE;
+
+    STSE_ASSERT(instance != VK_NULL_HANDLE);
+    
+    *pOutPhysicalDevice = VK_NULL_HANDLE;
+    
+    vkResult = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, NULL);
+    if(result != VK_SUCCESS)
+    {
+        STSE_GPU_logVkError(result, "could not enumerate physical devices");
+        return STSE_RESULT_GRAPHICS_API_FAILURE;
+    }
+
     if(physicalDeviceCount == 0u)
     {
         STSE_LOG_ERROR("no vulkan supporting device found");
         return STSE_RESULT_GRAPHICS_API_FAILURE;
     }
 
-    VkPhysicalDevice* pPhysicalDevices = NULL;
-    STSE_RESULT_RETURN_ERROR(STSE_MEMORY_ALLOCATE(sizeof(VkPhysicalDevice) * physicalDeviceCount, &pPhysicalDevices), 
-        "failed to allocate memory for physical devices");
-    
-    STSE_GPU_RETURN_ERROR_VK(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices));
-    
-    for(uint32_t physicalDeviceIndex = 0u; physicalDeviceIndex < physicalDeviceCount; ++physicalDeviceIndex)
+    result = STSE_MEMORY_ALLOCATE(sizeof(VkPhysicalDevice) * physicalDeviceCount, &pPhysicalDevices);
+    if(result != STSE_RESULT_SUCCESS)
     {
-        VkPhysicalDeviceProperties physicalDeviceProperties;
+        STSE_LOG_ERROR("failed to allocate memory for physical devices");
+        return result;
+    }
+    
+    vkResult = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices);
+    if(vkResult != VK_SUCCESS)
+    {
+        STSE_GPU_logVkError(vkResult, "could not enumerate physical devices");
+        return STSE_RESULT_GRAPHICS_API_FAILURE;
+    }
+    
+    for(physicalDeviceIndex = 0u; physicalDeviceIndex < physicalDeviceCount; ++physicalDeviceIndex)
+    {
         vkGetPhysicalDeviceProperties(pPhysicalDevices[physicalDeviceIndex], &physicalDeviceProperties);
         if(physicalDeviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
         {
@@ -93,27 +125,31 @@ static enum STSE_Result STSE_GPU_pickVkPhysicalDevice(const VkInstance instance,
     {
         STSE_LOG_DEBUG("no discrete GPU found, falling back on the first available physical device");
         *pOutPhysicalDevice = pPhysicalDevices[0];
-        
-        VkPhysicalDeviceProperties physicalDeviceProperties;
-        vkGetPhysicalDeviceProperties(pPhysicalDevices[0], &physicalDeviceProperties);
-        STSE_LOG_INFO_ARGS("selected gpu : name : %s", physicalDeviceProperties.deviceName);
-        
-        STSE_RESULT_RETURN_ERROR(STSE_MEMORY_DEALLOCATE(&pPhysicalDevices), 
-            "failed to deallocate physical devices");
+    }
+
+    vkGetPhysicalDeviceProperties(*pOutPhysicalDevice, &physicalDeviceProperties);
+    STSE_LOG_INFO_ARGS("selected gpu : name : %s", physicalDeviceProperties.deviceName);
+
+    result = STSE_MEMORY_DEALLOCATE(&pPhysicalDevices);
+    if(result != STSE_RESULT_SUCCESS)
+    {
+        STSE_LOG_ERROR("failed to deallocate physical devices");
+        return result;
     }
     
-    return STSE_RESULT_SUCCESS;
+    return result;
 }
 
 static enum STSE_Result STSE_GPU_createVkDevice()
 {
-    STSE_GPU_RETURN_ERROR_VK()
-
     return STSE_RESULT_SUCCESS;
 }
 
 enum STSE_Result STSE_GPU_initialize()
 {
+    enum STSE_Result result = STSE_RESULT_SUCCESS;
+    VkResult vkResult = VK_SUCCESS;
+
     if(pState != NULL)
     {
         STSE_LOG_ERROR("gpu system was already initialized");

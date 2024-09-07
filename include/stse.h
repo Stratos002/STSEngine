@@ -1,0 +1,16 @@
+#ifndef STSE_H
+#define STSE_H
+
+enum STSE_Result
+{
+    STSE_RESULT_SUCCESS,
+    STSE_RESULT_MAX_ALLOCATION_COUNT_REACHED,
+    STSE_RESULT_ALLOCATION_FAILURE,
+    STSE_RESULT_GRAPHICS_API_FAILURE
+};
+
+enum STSE_Result STSE_initialize();
+
+void STSE_terminate();
+
+#endif

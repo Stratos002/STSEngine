@@ -1,45 +1,29 @@
 #include "stse_log.h"
-#include "stse_assert.h"
 
 #include <stdarg.h>
 #include <stdio.h>
 
 static const char* pSeverityStrings[STSE_LOG_SEVERITY_MAX] = {
-    "FATAL",
     "ERROR",
     "WARNING",
-    "DEBUG",
     "INFO"
 };
 
-static void STSE_Log_printPrefix(const enum STSE_Log_Severity severity, const char* pInFile, const uint32_t line)
+void STSE_LOG_log(const enum STSE_Log_Severity severity, const char* pMessage, ...)
 {
-    STSE_ASSERT(severity < STSE_LOG_SEVERITY_MAX);
-    printf("[%s](file : %s, line : %d) - ", pSeverityStrings[severity], pInFile, line);
-}
+    char formattedMessage[1024];
 
-void STSE_Log_printToConsole(
-    const enum STSE_Log_Severity severity, 
-    const char* pMessage, 
-    const char* pInFile, 
-    const uint32_t line) 
-{
-    STSE_Log_printPrefix(severity, pInFile, line);
-    printf("%s\n", pMessage);
-}
-
-void STSE_Log_printToConsoleArgs(
-    const enum STSE_Log_Severity severity, 
-    const char* pMessage, 
-    const char* pInFile, 
-    const uint32_t line, 
-    ...)
-{
-	STSE_Log_printPrefix(severity, pInFile, line);
-	
     va_list args;
-	va_start(args, line);
-	vprintf(pMessage, args);
-    printf("\n");
-	va_end(args);
+    va_start(args, pMessage);
+    vsprintf(formattedMessage, pMessage, args);
+    va_end(args);
+
+    if(severity < STSE_LOG_SEVERITY_INFO)
+    {
+        fprintf(stderr, "[%s] : %s\n", pSeverityStrings[severity], formattedMessage);
+    }
+    else 
+    {
+        fprintf(stdout, "[%s] : %s\n", pSeverityStrings[severity], formattedMessage);
+    }
 }

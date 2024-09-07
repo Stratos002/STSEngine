@@ -1,7 +1,7 @@
 #ifndef STSE_WINDOW_H
 #define STSE_WINDOW_H
 
-#include "stsengine.h"
+#include "stse.h"
 
 #include <stdint.h>
 

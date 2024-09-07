@@ -1,7 +1,7 @@
 #ifndef STSE_GPU_H
 #define STSE_GPU_H
 
-#include "stsengine.h"
+#include "stse.h"
 
 enum STSE_Result STSE_GPU_initialize();
 
