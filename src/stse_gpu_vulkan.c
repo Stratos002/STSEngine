@@ -1,5 +1,4 @@
-#ifdef STSE_USE_VULKAN
-
+#include "stse_exit.h"
 #include "stse_gpu.h"
 #include "stse_memory.h"
 #include "stse_log.h"
@@ -17,194 +16,155 @@ struct STSE_GPU_State
 
 static struct STSE_GPU_State* pState = NULL;
 
-static void STSE_GPU_logVkError(const VkResult result, const char* pMessage)
+static void STSE_GPU_createVkInstance(const VkAllocationCallbacks* pAllocator, VkInstance* pOutInstance)
 {
-    STSE_LOG_ERROR_ARGS("vulkan error : %s (result = %d)", pMessage, (int32_t)result);
-}
+    VkApplicationInfo applicationInfo;
+    VkInstanceCreateInfo instanceCreateInfo;
+    uint32_t instanceLayerCount;
+    const char* pInstanceLayerNames[1] = {
+        "VK_LAYER_KHRONOS_validation"
+    };
 
-/*
-- variable declarations & initialization
-- check input variables
-- initialize out variables
-- do the rest
-*/
+    #ifdef STSE_CONFIGURATION_DEBUG
+        instanceLayerCount = 1u;
+    #else
+        instanceLayerCount = 0u;
+    #endif
 
-static enum STSE_Result STSE_GPU_createVkInstance(
-    const char* pApplicationName, 
-    const uint32_t layerCount, 
-    const char** ppLayerNames, 
-    const uint32_t extensionCount, 
-    const char** ppExtensionNames, 
-    VkInstance* pOutInstance)
-{
-    VkInstanceCreateInfo instanceCreateInfo = VK_NULL_HANDLE;
-    VkResult vkResult = VK_SUCCESS;
-    VkApplicationInfo applicationInfo = VK_NULL_HANDLE;
+    STSE_Memory_memzero(sizeof(VkApplicationInfo), &applicationInfo);
+    STSE_Memory_memzero(sizeof(VkInstanceCreateInfo), &instanceCreateInfo);
 
-    *pOutInstance = VK_NULL_HANDLE;
-    
-    STSE_MEMORY_MEMZERO(sizeof(VkApplicationInfo), &applicationInfo);
+    if(*pOutInstance != VK_NULL_HANDLE)
+    {
+        STSE_EXIT_exitFailure();
+    }
+
     applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     applicationInfo.pNext = NULL;
-    applicationInfo.pApplicationName = pApplicationName;
+    applicationInfo.pApplicationName = "STSEngine_Application";
     applicationInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     applicationInfo.pEngineName = "STSEngine";
-    applicationInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    applicationInfo.apiVersion = VK_MAKE_API_VERSION(1, 3, 0, 0);  
+    applicationInfo.apiVersion = VK_MAKE_API_VERSION(1, 3, 0, 0);
 
-    STSE_MEMORY_MEMZERO(sizeof(VkInstanceCreateInfo), &instanceCreateInfo);
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceCreateInfo.pNext = NULL;
     instanceCreateInfo.flags = 0;
     instanceCreateInfo.pApplicationInfo = &applicationInfo;
-    instanceCreateInfo.enabledLayerCount = layerCount;
-    instanceCreateInfo.ppEnabledLayerNames = ppLayerNames;
-    instanceCreateInfo.enabledExtensionCount = extensionCount;
-    instanceCreateInfo.ppEnabledExtensionNames = ppExtensionNames;
+    instanceCreateInfo.enabledLayerCount = instanceLayerCount;
+    instanceCreateInfo.ppEnabledLayerNames = pInstanceLayerNames;
+    instanceCreateInfo.enabledExtensionCount = 0u;
+    instanceCreateInfo.ppEnabledExtensionNames = NULL;
 
-    vkResult = vkCreateInstance(&instanceCreateInfo, pState->pAllocator, &pState->instance);
-    if(vkResult != VK_SUCCESS)
+    if(vkCreateInstance(&instanceCreateInfo, pAllocator, pOutInstance) != VK_SUCCESS)
     {
-        STSE_GPU_logVkError(vkResult, "could not create instance");
-        return STSE_RESULT_GRAPHICS_API_FAILURE;
+        STSE_EXIT_exitFailure();
     }
-
-    return STSE_RESULT_SUCCESS;
 }
 
-static enum STSE_Result STSE_GPU_pickVkPhysicalDevice(const VkInstance instance, VkPhysicalDevice* pOutPhysicalDevice)
+static void STSE_GPU_pickVkPhysicalDevice(const VkInstance instance, VkPhysicalDevice* pOutPhysicalDevice)
 {
-    VkResult vkResult = VK_SUCCESS;
-    enum STSE_Result result = STSE_RESULT_SUCCESS;
     uint32_t physicalDeviceCount = 0u;
-    uint32_t physicalDeviceIndex = 0u;
     VkPhysicalDevice* pPhysicalDevices = NULL;
-    VkPhysicalDeviceProperties physicalDeviceProperties = VK_NULL_HANDLE;
+    uint32_t physicalDeviceIndex = 0u;
+    VkPhysicalDeviceProperties physicalDeviceProperties;
 
-    STSE_ASSERT(instance != VK_NULL_HANDLE);
-    
-    *pOutPhysicalDevice = VK_NULL_HANDLE;
-    
-    vkResult = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, NULL);
-    if(result != VK_SUCCESS)
+    if(instance == VK_NULL_HANDLE)
     {
-        STSE_GPU_logVkError(result, "could not enumerate physical devices");
-        return STSE_RESULT_GRAPHICS_API_FAILURE;
+        STSE_EXIT_exitFailure();
+    }
+
+    if(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices) != VK_SUCCESS)
+    {
+        STSE_EXIT_exitFailure();
     }
 
     if(physicalDeviceCount == 0u)
     {
-        STSE_LOG_ERROR("no vulkan supporting device found");
-        return STSE_RESULT_GRAPHICS_API_FAILURE;
+        STSE_EXIT_exitFailure();
     }
 
-    result = STSE_MEMORY_ALLOCATE(sizeof(VkPhysicalDevice) * physicalDeviceCount, &pPhysicalDevices);
-    if(result != STSE_RESULT_SUCCESS)
+    STSE_Memory_allocate(sizeof(VkPhysicalDevice) * physicalDeviceCount, (void**)&pPhysicalDevices);
+
+    if(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices) != VK_SUCCESS)
     {
-        STSE_LOG_ERROR("failed to allocate memory for physical devices");
-        return result;
+        STSE_EXIT_exitFailure();
     }
-    
-    vkResult = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices);
-    if(vkResult != VK_SUCCESS)
-    {
-        STSE_GPU_logVkError(vkResult, "could not enumerate physical devices");
-        return STSE_RESULT_GRAPHICS_API_FAILURE;
-    }
-    
+
+    *pOutPhysicalDevice = pPhysicalDevices[0];
+
     for(physicalDeviceIndex = 0u; physicalDeviceIndex < physicalDeviceCount; ++physicalDeviceIndex)
     {
         vkGetPhysicalDeviceProperties(pPhysicalDevices[physicalDeviceIndex], &physicalDeviceProperties);
         if(physicalDeviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
         {
             *pOutPhysicalDevice = pPhysicalDevices[physicalDeviceIndex];
+            break;
         }
-    }
-
-    if(*pOutPhysicalDevice == VK_NULL_HANDLE)
-    {
-        STSE_LOG_DEBUG("no discrete GPU found, falling back on the first available physical device");
-        *pOutPhysicalDevice = pPhysicalDevices[0];
     }
 
     vkGetPhysicalDeviceProperties(*pOutPhysicalDevice, &physicalDeviceProperties);
-    STSE_LOG_INFO_ARGS("selected gpu : name : %s", physicalDeviceProperties.deviceName);
+    STSE_LOG_log(STSE_LOG_OUTPUT_STANDARD, "selected vulkan device : %s", physicalDeviceProperties.deviceName);
 
-    result = STSE_MEMORY_DEALLOCATE(&pPhysicalDevices);
-    if(result != STSE_RESULT_SUCCESS)
+    STSE_Memory_deallocate(pPhysicalDevices);
+}
+
+static void STSE_GPU_createVkDevice(const VkPhysicalDevice physicalDevice, const VkAllocationCallbacks* pAllocator, VkDevice* pOutDevice)
+{
+    VkDeviceCreateInfo deviceCreateInfo;
+
+    STSE_Memory_memzero(sizeof(VkDeviceCreateInfo), &deviceCreateInfo);
+
+    deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceCreateInfo.pNext = NULL;
+    deviceCreateInfo.flags = 0;
+    deviceCreateInfo.queueCreateInfoCount = 0u;
+    deviceCreateInfo.pQueueCreateInfos = NULL;
+    deviceCreateInfo.enabledLayerCount = 0u;
+    deviceCreateInfo.ppEnabledLayerNames = NULL;
+    deviceCreateInfo.enabledExtensionCount = 0u;
+    deviceCreateInfo.ppEnabledExtensionNames = NULL;
+    deviceCreateInfo.pEnabledFeatures = NULL;
+
+    if(vkCreateDevice(physicalDevice, &deviceCreateInfo, pAllocator, pOutDevice) != VK_SUCCESS)
     {
-        STSE_LOG_ERROR("failed to deallocate physical devices");
-        return result;
+        STSE_EXIT_exitFailure();
     }
-    
-    return result;
 }
 
-static enum STSE_Result STSE_GPU_createVkDevice()
+void STSE_GPU_initialize(void)
 {
-    return STSE_RESULT_SUCCESS;
-}
-
-enum STSE_Result STSE_GPU_initialize()
-{
-    enum STSE_Result result = STSE_RESULT_SUCCESS;
-    VkResult vkResult = VK_SUCCESS;
-
     if(pState != NULL)
     {
-        STSE_LOG_ERROR("gpu system was already initialized");
-        return STSE_RESULT_ALREADY_INITIALIZED;
+        STSE_EXIT_exitFailure();
     }
 
-    STSE_RESULT_RETURN_ERROR(volkInitialize(), 
-        "failed to initialize Volk");
+    STSE_Memory_allocate(sizeof(struct STSE_GPU_State), (void**)&pState);
+    STSE_Memory_memzero(sizeof(struct STSE_GPU_State), pState);
 
-    STSE_RESULT_RETURN_ERROR(STSE_MEMORY_ALLOCATE(sizeof(struct STSE_GPU_State), &pState), 
-        "failed to allocate memory for GPU state");
-    
-    STSE_MEMORY_MEMZERO(sizeof(struct STSE_GPU_State), pState);
+    if(volkInitialize() != VK_SUCCESS)
+    {
+        STSE_EXIT_exitFailure();
+    }
 
-    const char* pInstanceLayerNames[1] = {
-        "VK_LAYER_KHRONOS_validation" // this layer is made available by setting a path to the SDK
-    };
-
-    const uint32_t instanceLayerCount = sizeof(pInstanceLayerNames) / sizeof(pInstanceLayerNames[0]);
-
-    #ifndef STSE_CONFIGURATION_DEBUG
-        instanceLayerCount -= 1u;
-    #endif  
-
-    const char** ppInstanceExtensionNames = NULL;
-    const uint32_t instanceExtensionCount = 0u;
-
-    STSE_RESULT_RETURN_ERROR(STSE_GPU_createVkInstance(
-        "prout", 
-        instanceLayerCount, 
-        pInstanceLayerNames, 
-        instanceExtensionCount, 
-        ppInstanceExtensionNames,
-        &pState->instance), 
-            "failed to create vulkan instance");
+    STSE_GPU_createVkInstance(pState->pAllocator, &pState->instance);
 
     volkLoadInstance(pState->instance);
 
-    STSE_RESULT_RETURN_ERROR(STSE_GPU_pickVkPhysicalDevice(pState->instance, &pState->physicalDevice), 
-        "failed to pick a vulkan physical device");
+    STSE_GPU_pickVkPhysicalDevice(pState->instance, &pState->physicalDevice);
 
-    return STSE_RESULT_SUCCESS;
+    STSE_GPU_createVkDevice(pState->physicalDevice, pState->pAllocator, &pState->device);
+
+    volkLoadDevice(pState->device);
 }
 
-void STSE_GPU_terminate()
+void STSE_GPU_terminate(void)
 {
     if(pState != NULL)
     {
+        vkDestroyDevice(pState->device, pState->pAllocator);
         vkDestroyInstance(pState->instance, pState->pAllocator);
-
-        if(STSE_MEMORY_DEALLOCATE(&pState) != STSE_RESULT_SUCCESS)
-        {
-            STSE_LOG_WARNING("failed to deallocate GPU system");
-        }
+        
+        STSE_Memory_deallocate(pState);
+        pState = NULL;
     }
 }
-
-#endif

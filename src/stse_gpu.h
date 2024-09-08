@@ -1,10 +1,8 @@
 #ifndef STSE_GPU_H
 #define STSE_GPU_H
 
-#include "stse.h"
+void STSE_GPU_initialize(void);
 
-enum STSE_Result STSE_GPU_initialize();
-
-void STSE_GPU_terminate();
+void STSE_GPU_terminate(void);
 
 #endif

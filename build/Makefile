@@ -177,6 +177,30 @@ src/stse.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse.c.s
 .PHONY : src/stse.c.s
 
+src/stse_exit.o: src/stse_exit.c.o
+.PHONY : src/stse_exit.o
+
+# target to build an object file
+src/stse_exit.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse_exit.c.o
+.PHONY : src/stse_exit.c.o
+
+src/stse_exit.i: src/stse_exit.c.i
+.PHONY : src/stse_exit.i
+
+# target to preprocess a source file
+src/stse_exit.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse_exit.c.i
+.PHONY : src/stse_exit.c.i
+
+src/stse_exit.s: src/stse_exit.c.s
+.PHONY : src/stse_exit.s
+
+# target to generate assembly for a file
+src/stse_exit.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse_exit.c.s
+.PHONY : src/stse_exit.c.s
+
 src/stse_gpu_vulkan.o: src/stse_gpu_vulkan.c.o
 .PHONY : src/stse_gpu_vulkan.o
 
@@ -249,30 +273,6 @@ src/stse_memory.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse_memory.c.s
 .PHONY : src/stse_memory.c.s
 
-src/stse_window_wayland.o: src/stse_window_wayland.c.o
-.PHONY : src/stse_window_wayland.o
-
-# target to build an object file
-src/stse_window_wayland.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o
-.PHONY : src/stse_window_wayland.c.o
-
-src/stse_window_wayland.i: src/stse_window_wayland.c.i
-.PHONY : src/stse_window_wayland.i
-
-# target to preprocess a source file
-src/stse_window_wayland.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.i
-.PHONY : src/stse_window_wayland.c.i
-
-src/stse_window_wayland.s: src/stse_window_wayland.c.s
-.PHONY : src/stse_window_wayland.s
-
-# target to generate assembly for a file
-src/stse_window_wayland.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/STSEngine.dir/build.make CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.s
-.PHONY : src/stse_window_wayland.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -288,6 +288,9 @@ help:
 	@echo "... src/stse.o"
 	@echo "... src/stse.i"
 	@echo "... src/stse.s"
+	@echo "... src/stse_exit.o"
+	@echo "... src/stse_exit.i"
+	@echo "... src/stse_exit.s"
 	@echo "... src/stse_gpu_vulkan.o"
 	@echo "... src/stse_gpu_vulkan.i"
 	@echo "... src/stse_gpu_vulkan.s"
@@ -297,9 +300,6 @@ help:
 	@echo "... src/stse_memory.o"
 	@echo "... src/stse_memory.i"
 	@echo "... src/stse_memory.s"
-	@echo "... src/stse_window_wayland.o"
-	@echo "... src/stse_window_wayland.i"
-	@echo "... src/stse_window_wayland.s"
 .PHONY : help
 
 

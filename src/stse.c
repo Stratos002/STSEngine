@@ -3,29 +3,18 @@
 #include "stse_gpu.h"
 #include "stse_log.h"
 
-#include <stdlib.h>
-
-enum STSE_Result STSE_initialize()
+void STSE_initialize(void)
 {
-    enum STSE_Result result = STSE_Memory_initialize();
-    if(result != STSE_RESULT_SUCCESS)
-    {
-        STSE_LOG_log(STSE_LOG_SEVERITY_ERROR, "could not initialize the memory system");
-        exit(result);
-    }
+    STSE_Memory_initialize();
+    STSE_GPU_initialize();
 
-    result = STSE_GPU_initialize();
-    if(result != STSE_RESULT_SUCCESS)
-    {
-        STSE_LOG_log(const enum STSE_Log_Severity severity, const char *pMessage)
-        return result;
-    }
-
-    return STSE_RESULT_SUCCESS;
+    STSE_LOG_log(STSE_LOG_OUTPUT_STANDARD, "STSEngine initialized successfully");
 }
 
-void STSE_terminate()
+void STSE_terminate(void)
 {
     STSE_GPU_terminate();
     STSE_Memory_terminate();
+
+    STSE_LOG_log(STSE_LOG_OUTPUT_STANDARD, "STSEngine terminated successfully");
 }

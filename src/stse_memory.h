@@ -1,16 +1,18 @@
 #ifndef STSE_MEMORY_H
 #define STSE_MEMORY_H
 
-#include "stse.h"
-
 #include <stdint.h>
 
-enum STSE_Result STSE_Memory_initialize();
+void STSE_Memory_initialize(void);
 
-void STSE_Memory_terminate();
+void STSE_Memory_terminate(void);
 
-enum STSE_Result STSE_MEMORY_allocate(void** ppBlock, const uint32_t sizeInBytes);
+void STSE_Memory_allocate(const uint32_t sizeInBytes, void** ppOutBlock);
 
-void STSE_MEMORY_deallocate(const void* pBlock);
+void STSE_Memory_deallocate(void* pInBlock);
+
+void STSE_Memory_memset(const uint32_t sizeInBytes, const int32_t value, void* pInOutBlock);
+
+void STSE_Memory_memzero(const uint32_t sizeInBytes, void* pInOutBlock);
 
 #endif

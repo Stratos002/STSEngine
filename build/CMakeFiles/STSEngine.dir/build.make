@@ -73,104 +73,104 @@ CMakeFiles/STSEngine.dir/src/main.c.o: CMakeFiles/STSEngine.dir/flags.make
 CMakeFiles/STSEngine.dir/src/main.c.o: /home/stratos/Projects/STSEngine/src/main.c
 CMakeFiles/STSEngine.dir/src/main.c.o: CMakeFiles/STSEngine.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/STSEngine.dir/src/main.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/main.c.o -MF CMakeFiles/STSEngine.dir/src/main.c.o.d -o CMakeFiles/STSEngine.dir/src/main.c.o -c /home/stratos/Projects/STSEngine/src/main.c
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/main.c.o -MF CMakeFiles/STSEngine.dir/src/main.c.o.d -o CMakeFiles/STSEngine.dir/src/main.c.o -c /home/stratos/Projects/STSEngine/src/main.c
 
 CMakeFiles/STSEngine.dir/src/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/STSEngine.dir/src/main.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/main.c > CMakeFiles/STSEngine.dir/src/main.c.i
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/main.c > CMakeFiles/STSEngine.dir/src/main.c.i
 
 CMakeFiles/STSEngine.dir/src/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/STSEngine.dir/src/main.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/main.c -o CMakeFiles/STSEngine.dir/src/main.c.s
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/main.c -o CMakeFiles/STSEngine.dir/src/main.c.s
 
 CMakeFiles/STSEngine.dir/src/stse.c.o: CMakeFiles/STSEngine.dir/flags.make
 CMakeFiles/STSEngine.dir/src/stse.c.o: /home/stratos/Projects/STSEngine/src/stse.c
 CMakeFiles/STSEngine.dir/src/stse.c.o: CMakeFiles/STSEngine.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/STSEngine.dir/src/stse.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse.c.o -MF CMakeFiles/STSEngine.dir/src/stse.c.o.d -o CMakeFiles/STSEngine.dir/src/stse.c.o -c /home/stratos/Projects/STSEngine/src/stse.c
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse.c.o -MF CMakeFiles/STSEngine.dir/src/stse.c.o.d -o CMakeFiles/STSEngine.dir/src/stse.c.o -c /home/stratos/Projects/STSEngine/src/stse.c
 
 CMakeFiles/STSEngine.dir/src/stse.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/STSEngine.dir/src/stse.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse.c > CMakeFiles/STSEngine.dir/src/stse.c.i
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse.c > CMakeFiles/STSEngine.dir/src/stse.c.i
 
 CMakeFiles/STSEngine.dir/src/stse.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/STSEngine.dir/src/stse.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse.c -o CMakeFiles/STSEngine.dir/src/stse.c.s
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse.c -o CMakeFiles/STSEngine.dir/src/stse.c.s
+
+CMakeFiles/STSEngine.dir/src/stse_exit.c.o: CMakeFiles/STSEngine.dir/flags.make
+CMakeFiles/STSEngine.dir/src/stse_exit.c.o: /home/stratos/Projects/STSEngine/src/stse_exit.c
+CMakeFiles/STSEngine.dir/src/stse_exit.c.o: CMakeFiles/STSEngine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/STSEngine.dir/src/stse_exit.c.o"
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_exit.c.o -MF CMakeFiles/STSEngine.dir/src/stse_exit.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_exit.c.o -c /home/stratos/Projects/STSEngine/src/stse_exit.c
+
+CMakeFiles/STSEngine.dir/src/stse_exit.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/STSEngine.dir/src/stse_exit.c.i"
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_exit.c > CMakeFiles/STSEngine.dir/src/stse_exit.c.i
+
+CMakeFiles/STSEngine.dir/src/stse_exit.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/STSEngine.dir/src/stse_exit.c.s"
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_exit.c -o CMakeFiles/STSEngine.dir/src/stse_exit.c.s
 
 CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o: CMakeFiles/STSEngine.dir/flags.make
 CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o: /home/stratos/Projects/STSEngine/src/stse_gpu_vulkan.c
 CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o: CMakeFiles/STSEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o -MF CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o -c /home/stratos/Projects/STSEngine/src/stse_gpu_vulkan.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o"
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o -MF CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o -c /home/stratos/Projects/STSEngine/src/stse_gpu_vulkan.c
 
 CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_gpu_vulkan.c > CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.i
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_gpu_vulkan.c > CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.i
 
 CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_gpu_vulkan.c -o CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.s
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_gpu_vulkan.c -o CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.s
 
 CMakeFiles/STSEngine.dir/src/stse_log.c.o: CMakeFiles/STSEngine.dir/flags.make
 CMakeFiles/STSEngine.dir/src/stse_log.c.o: /home/stratos/Projects/STSEngine/src/stse_log.c
 CMakeFiles/STSEngine.dir/src/stse_log.c.o: CMakeFiles/STSEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/STSEngine.dir/src/stse_log.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_log.c.o -MF CMakeFiles/STSEngine.dir/src/stse_log.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_log.c.o -c /home/stratos/Projects/STSEngine/src/stse_log.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/STSEngine.dir/src/stse_log.c.o"
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_log.c.o -MF CMakeFiles/STSEngine.dir/src/stse_log.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_log.c.o -c /home/stratos/Projects/STSEngine/src/stse_log.c
 
 CMakeFiles/STSEngine.dir/src/stse_log.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/STSEngine.dir/src/stse_log.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_log.c > CMakeFiles/STSEngine.dir/src/stse_log.c.i
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_log.c > CMakeFiles/STSEngine.dir/src/stse_log.c.i
 
 CMakeFiles/STSEngine.dir/src/stse_log.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/STSEngine.dir/src/stse_log.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_log.c -o CMakeFiles/STSEngine.dir/src/stse_log.c.s
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_log.c -o CMakeFiles/STSEngine.dir/src/stse_log.c.s
 
 CMakeFiles/STSEngine.dir/src/stse_memory.c.o: CMakeFiles/STSEngine.dir/flags.make
 CMakeFiles/STSEngine.dir/src/stse_memory.c.o: /home/stratos/Projects/STSEngine/src/stse_memory.c
 CMakeFiles/STSEngine.dir/src/stse_memory.c.o: CMakeFiles/STSEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/STSEngine.dir/src/stse_memory.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_memory.c.o -MF CMakeFiles/STSEngine.dir/src/stse_memory.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_memory.c.o -c /home/stratos/Projects/STSEngine/src/stse_memory.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/STSEngine.dir/src/stse_memory.c.o"
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_memory.c.o -MF CMakeFiles/STSEngine.dir/src/stse_memory.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_memory.c.o -c /home/stratos/Projects/STSEngine/src/stse_memory.c
 
 CMakeFiles/STSEngine.dir/src/stse_memory.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/STSEngine.dir/src/stse_memory.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_memory.c > CMakeFiles/STSEngine.dir/src/stse_memory.c.i
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_memory.c > CMakeFiles/STSEngine.dir/src/stse_memory.c.i
 
 CMakeFiles/STSEngine.dir/src/stse_memory.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/STSEngine.dir/src/stse_memory.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_memory.c -o CMakeFiles/STSEngine.dir/src/stse_memory.c.s
-
-CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o: CMakeFiles/STSEngine.dir/flags.make
-CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o: /home/stratos/Projects/STSEngine/src/stse_window_wayland.c
-CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o: CMakeFiles/STSEngine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o -MF CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o.d -o CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o -c /home/stratos/Projects/STSEngine/src/stse_window_wayland.c
-
-CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stratos/Projects/STSEngine/src/stse_window_wayland.c > CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.i
-
-CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_window_wayland.c -o CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.s
+	/usr/bin/clang $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stratos/Projects/STSEngine/src/stse_memory.c -o CMakeFiles/STSEngine.dir/src/stse_memory.c.s
 
 # Object files for target STSEngine
 STSEngine_OBJECTS = \
 "CMakeFiles/STSEngine.dir/src/main.c.o" \
 "CMakeFiles/STSEngine.dir/src/stse.c.o" \
+"CMakeFiles/STSEngine.dir/src/stse_exit.c.o" \
 "CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o" \
 "CMakeFiles/STSEngine.dir/src/stse_log.c.o" \
-"CMakeFiles/STSEngine.dir/src/stse_memory.c.o" \
-"CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o"
+"CMakeFiles/STSEngine.dir/src/stse_memory.c.o"
 
 # External object files for target STSEngine
 STSEngine_EXTERNAL_OBJECTS =
 
 STSEngine: CMakeFiles/STSEngine.dir/src/main.c.o
 STSEngine: CMakeFiles/STSEngine.dir/src/stse.c.o
+STSEngine: CMakeFiles/STSEngine.dir/src/stse_exit.c.o
 STSEngine: CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o
 STSEngine: CMakeFiles/STSEngine.dir/src/stse_log.c.o
 STSEngine: CMakeFiles/STSEngine.dir/src/stse_memory.c.o
-STSEngine: CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o
 STSEngine: CMakeFiles/STSEngine.dir/build.make
 STSEngine: CMakeFiles/STSEngine.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/stratos/Projects/STSEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking C executable STSEngine"

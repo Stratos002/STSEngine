@@ -1,1 +1,1 @@
-/usr/bin/cc CMakeFiles/STSEngine.dir/src/main.c.o CMakeFiles/STSEngine.dir/src/stse.c.o CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o CMakeFiles/STSEngine.dir/src/stse_log.c.o CMakeFiles/STSEngine.dir/src/stse_memory.c.o CMakeFiles/STSEngine.dir/src/stse_window_wayland.c.o -o STSEngine
+/usr/bin/clang -g CMakeFiles/STSEngine.dir/src/main.c.o CMakeFiles/STSEngine.dir/src/stse.c.o CMakeFiles/STSEngine.dir/src/stse_exit.c.o CMakeFiles/STSEngine.dir/src/stse_gpu_vulkan.c.o CMakeFiles/STSEngine.dir/src/stse_log.c.o CMakeFiles/STSEngine.dir/src/stse_memory.c.o -o STSEngine
