@@ -1,3 +1,5 @@
+#if defined STSE_USE_VULKAN
+
 #include "stse_exit.h"
 #include "stse_gpu.h"
 #include "stse_memory.h"
@@ -20,19 +22,17 @@ static void STSE_GPU_createVkInstance(const VkAllocationCallbacks* pAllocator, V
 {
     VkApplicationInfo applicationInfo;
     VkInstanceCreateInfo instanceCreateInfo;
-    uint32_t instanceLayerCount;
+    uint32_t instanceLayerCount = 0u;
     const char* pInstanceLayerNames[1] = {
         "VK_LAYER_KHRONOS_validation"
     };
 
-    #ifdef STSE_CONFIGURATION_DEBUG
-        instanceLayerCount = 1u;
-    #else
-        instanceLayerCount = 0u;
-    #endif
-
     STSE_Memory_memzero(sizeof(VkApplicationInfo), &applicationInfo);
     STSE_Memory_memzero(sizeof(VkInstanceCreateInfo), &instanceCreateInfo);
+
+    #ifdef STSE_CONFIGURATION_DEBUG
+        ++instanceLayerCount;
+    #endif
 
     if(*pOutInstance != VK_NULL_HANDLE)
     {
@@ -108,17 +108,66 @@ static void STSE_GPU_pickVkPhysicalDevice(const VkInstance instance, VkPhysicalD
     STSE_Memory_deallocate(pPhysicalDevices);
 }
 
+static void STSE_GPU_getMainVkQueueFamilyIndex(const VkPhysicalDevice physicalDevice, uint32_t* pOutQueueFamilyIndex)
+{
+    uint32_t queueFamilyCount = 0u;
+    VkQueueFamilyProperties* pQueueFamilyProperties = NULL;
+    uint32_t queueFamilyIndex = 0u;
+
+    if(physicalDevice == VK_NULL_HANDLE)
+    {
+        STSE_EXIT_exitFailure();
+    }
+
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, pQueueFamilyProperties);
+
+    if(queueFamilyCount == 0u)
+    {
+        STSE_EXIT_exitFailure();
+    }
+
+    STSE_Memory_allocate(sizeof(VkQueueFamilyProperties), (void**)&pQueueFamilyProperties);
+
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, pQueueFamilyProperties);
+
+    for(queueFamilyIndex = 0u; queueFamilyIndex < queueFamilyCount; ++queueFamilyIndex)
+    {
+        const VkQueueFlags requiredFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
+
+        if(pQueueFamilyProperties[queueFamilyIndex].queueFlags == requiredFlags)
+        {
+            *pOutQueueFamilyIndex = queueFamilyIndex;
+            STSE_Memory_deallocate(pQueueFamilyProperties);
+            return;
+        }
+    }
+
+    STSE_EXIT_exitFailure();
+}
+
 static void STSE_GPU_createVkDevice(const VkPhysicalDevice physicalDevice, const VkAllocationCallbacks* pAllocator, VkDevice* pOutDevice)
 {
     VkDeviceCreateInfo deviceCreateInfo;
+    VkDeviceQueueCreateInfo queueCreateInfo;
+    uint32_t mainQueueFamilyIndex;
+    const float queuePriority = 1.0f;
 
     STSE_Memory_memzero(sizeof(VkDeviceCreateInfo), &deviceCreateInfo);
+    STSE_Memory_memzero(sizeof(VkDeviceQueueCreateInfo), &queueCreateInfo);
+    STSE_GPU_getMainVkQueueFamilyIndex(physicalDevice, &mainQueueFamilyIndex);
+
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.pNext = NULL;
+    queueCreateInfo.flags = 0;
+    queueCreateInfo.queueFamilyIndex = mainQueueFamilyIndex;
+    queueCreateInfo.queueCount = 1u;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
 
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceCreateInfo.pNext = NULL;
     deviceCreateInfo.flags = 0;
-    deviceCreateInfo.queueCreateInfoCount = 0u;
-    deviceCreateInfo.pQueueCreateInfos = NULL;
+    deviceCreateInfo.queueCreateInfoCount = 1u;
+    deviceCreateInfo.pQueueCreateInfos = &queueCreateInfo;
     deviceCreateInfo.enabledLayerCount = 0u;
     deviceCreateInfo.ppEnabledLayerNames = NULL;
     deviceCreateInfo.enabledExtensionCount = 0u;
@@ -163,8 +212,10 @@ void STSE_GPU_terminate(void)
     {
         vkDestroyDevice(pState->device, pState->pAllocator);
         vkDestroyInstance(pState->instance, pState->pAllocator);
-        
+
         STSE_Memory_deallocate(pState);
         pState = NULL;
     }
 }
+
+#endif
