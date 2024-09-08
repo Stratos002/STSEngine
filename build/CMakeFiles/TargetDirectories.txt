@@ -1,3 +1,0 @@
-/home/stratos/Projects/STSEngine/build/CMakeFiles/STSEngine.dir
-/home/stratos/Projects/STSEngine/build/CMakeFiles/edit_cache.dir
-/home/stratos/Projects/STSEngine/build/CMakeFiles/rebuild_cache.dir
