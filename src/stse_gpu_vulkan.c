@@ -1,12 +1,23 @@
-#if defined STSE_USE_VULKAN
+#if defined STSE_GRAPHICS_API_VULKAN
 
 #include "stse_exit.h"
 #include "stse_gpu.h"
 #include "stse_memory.h"
 #include "stse_log.h"
+#include "stse_window.h"
 
 #define VOLK_IMPLEMENTATION
 #include "volk.h"
+
+#include <stdbool.h>
+
+enum STSE_GPU_ProgramState
+{
+    STSE_GPU_PROGRAM_STATE_NOT_SET,
+    STSE_GPU_PROGRAM_STATE_PENDING,
+    STSE_GPU_PROGRAM_STATE_COMPILING,
+    STSE_GPU_PROGRAM_STATE_READY
+};
 
 struct STSE_GPU_State
 {
@@ -23,20 +34,24 @@ static void STSE_GPU_createVkInstance(const VkAllocationCallbacks* pAllocator, V
     VkApplicationInfo applicationInfo;
     VkInstanceCreateInfo instanceCreateInfo;
     uint32_t instanceLayerCount = 0u;
+    uint32_t instanceExtensionCount = 0u;
     const char* pInstanceLayerNames[1] = {
         "VK_LAYER_KHRONOS_validation"
     };
-
-    STSE_Memory_memzero(sizeof(VkApplicationInfo), &applicationInfo);
-    STSE_Memory_memzero(sizeof(VkInstanceCreateInfo), &instanceCreateInfo);
+    const char** ppInstanceExtensionNames = NULL;
 
     #ifdef STSE_CONFIGURATION_DEBUG
         ++instanceLayerCount;
     #endif
+    
+    STSE_Window_getRequiredVkInstanceExtensions(&instanceExtensionCount, &ppInstanceExtensionNames);
 
+    STSE_Memory_memzero(sizeof(VkApplicationInfo), &applicationInfo);
+    STSE_Memory_memzero(sizeof(VkInstanceCreateInfo), &instanceCreateInfo);
+    
     if(*pOutInstance != VK_NULL_HANDLE)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
     applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -52,12 +67,12 @@ static void STSE_GPU_createVkInstance(const VkAllocationCallbacks* pAllocator, V
     instanceCreateInfo.pApplicationInfo = &applicationInfo;
     instanceCreateInfo.enabledLayerCount = instanceLayerCount;
     instanceCreateInfo.ppEnabledLayerNames = pInstanceLayerNames;
-    instanceCreateInfo.enabledExtensionCount = 0u;
-    instanceCreateInfo.ppEnabledExtensionNames = NULL;
+    instanceCreateInfo.enabledExtensionCount = instanceExtensionCount;
+    instanceCreateInfo.ppEnabledExtensionNames = ppInstanceExtensionNames;
 
     if(vkCreateInstance(&instanceCreateInfo, pAllocator, pOutInstance) != VK_SUCCESS)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 }
 
@@ -70,24 +85,20 @@ static void STSE_GPU_pickVkPhysicalDevice(const VkInstance instance, VkPhysicalD
 
     if(instance == VK_NULL_HANDLE)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
-    if(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices) != VK_SUCCESS)
+    if(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices) != VK_SUCCESS || 
+        physicalDeviceCount == 0u)
     {
-        STSE_EXIT_exitFailure();
-    }
-
-    if(physicalDeviceCount == 0u)
-    {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
     STSE_Memory_allocate(sizeof(VkPhysicalDevice) * physicalDeviceCount, (void**)&pPhysicalDevices);
 
     if(vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, pPhysicalDevices) != VK_SUCCESS)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
     *pOutPhysicalDevice = pPhysicalDevices[0];
@@ -116,14 +127,14 @@ static void STSE_GPU_getMainVkQueueFamilyIndex(const VkPhysicalDevice physicalDe
 
     if(physicalDevice == VK_NULL_HANDLE)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
     vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, pQueueFamilyProperties);
 
     if(queueFamilyCount == 0u)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
     STSE_Memory_allocate(sizeof(VkQueueFamilyProperties), (void**)&pQueueFamilyProperties);
@@ -142,7 +153,7 @@ static void STSE_GPU_getMainVkQueueFamilyIndex(const VkPhysicalDevice physicalDe
         }
     }
 
-    STSE_EXIT_exitFailure();
+    STSE_Exit_exitFailure();
 }
 
 static void STSE_GPU_createVkDevice(const VkPhysicalDevice physicalDevice, const VkAllocationCallbacks* pAllocator, VkDevice* pOutDevice)
@@ -154,6 +165,7 @@ static void STSE_GPU_createVkDevice(const VkPhysicalDevice physicalDevice, const
 
     STSE_Memory_memzero(sizeof(VkDeviceCreateInfo), &deviceCreateInfo);
     STSE_Memory_memzero(sizeof(VkDeviceQueueCreateInfo), &queueCreateInfo);
+    
     STSE_GPU_getMainVkQueueFamilyIndex(physicalDevice, &mainQueueFamilyIndex);
 
     queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -176,7 +188,7 @@ static void STSE_GPU_createVkDevice(const VkPhysicalDevice physicalDevice, const
 
     if(vkCreateDevice(physicalDevice, &deviceCreateInfo, pAllocator, pOutDevice) != VK_SUCCESS)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 }
 
@@ -184,7 +196,7 @@ void STSE_GPU_initialize(void)
 {
     if(pState != NULL)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
     STSE_Memory_allocate(sizeof(struct STSE_GPU_State), (void**)&pState);
@@ -192,17 +204,17 @@ void STSE_GPU_initialize(void)
 
     if(volkInitialize() != VK_SUCCESS)
     {
-        STSE_EXIT_exitFailure();
+        STSE_Exit_exitFailure();
     }
 
     STSE_GPU_createVkInstance(pState->pAllocator, &pState->instance);
-
+    
     volkLoadInstance(pState->instance);
-
+    
     STSE_GPU_pickVkPhysicalDevice(pState->instance, &pState->physicalDevice);
-
+    
     STSE_GPU_createVkDevice(pState->physicalDevice, pState->pAllocator, &pState->device);
-
+    
     volkLoadDevice(pState->device);
 }
 
@@ -215,6 +227,30 @@ void STSE_GPU_terminate(void)
 
         STSE_Memory_deallocate(pState);
         pState = NULL;
+    }
+}
+
+void STSE_GPU_setProgram(const struct STSE_GPU_Program program)
+{
+    if(pState == NULL)
+    {
+        STSE_Exit_exitFailure();
+    }
+}
+
+void STSE_GPU_compileProgram(void)
+{
+    if(pState == NULL)
+    {
+        STSE_Exit_exitFailure();
+    }
+}
+
+void STSE_GPU_executeProgram(void)
+{
+    if(pState == NULL)
+    {
+        STSE_Exit_exitFailure();
     }
 }
 
